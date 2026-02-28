@@ -28,9 +28,8 @@ jobs:
         run: |
           msbuild "$env:SLN" /t:ValidateSolutionConfiguration /v:m
 
-      - name: Build (Debug | Any CPU)
-        shell: pwsh
-        run: msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform="Any CPU"
+      - name: Build (Debug | x86)
+        run: msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform=x86
 
       - name: Upload artifact (DLL/PDB)
         uses: actions/upload-artifact@v4
