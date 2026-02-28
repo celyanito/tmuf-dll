@@ -28,18 +28,9 @@ jobs:
         run: |
           msbuild "$env:SLN" /t:ValidateSolutionConfiguration /v:m
 
-      - name: Build (try Win32, fallback x86)
+      - name: Build (Debug | Any CPU)
         shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-          try {
-            msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform=Win32
-            Write-Host "Built with Platform=Win32"
-          } catch {
-            Write-Host "Win32 failed, retrying with Platform=x86..."
-            msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform=x86
-            Write-Host "Built with Platform=x86"
-          }
+        run: msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform="Any CPU"
 
       - name: Upload artifact (DLL/PDB)
         uses: actions/upload-artifact@v4
