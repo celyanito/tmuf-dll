@@ -1,0 +1,39 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Locate solution
+        shell: pwsh
+        run: |
+          $sln = Get-ChildItem -Recurse -Filter *.sln | Select-Object -First 1
+          if (-not $sln) { throw "No .sln found in repo." }
+          "SLN=$($sln.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build (Debug | x86)
+        run: msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform=x86
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Get-ChildItem -Recurse -Filter *.dll | Where-Object { $_.FullName -match "\\Debug\\" } | Copy-Item -Destination dist -Force
+          Get-ChildItem -Recurse -Filter *.pdb | Where-Object { $_.FullName -match "\\Debug\\" } | Copy-Item -Destination dist -Force
+          Compress-Archive -Path dist\* -DestinationPath tmuf-dll_${{ github.ref_name }}.zip -Force
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: tmuf-dll_${{ github.ref_name }}.zip
