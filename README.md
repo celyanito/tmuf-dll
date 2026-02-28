@@ -10,7 +10,5 @@ Injected DLL (Debug x86 / Win32) for TrackMania Forever / TMUF.
 Output: `Debug/TmMyMod.dll`
 
 ## Build (command line)
-From a **Developer Command Prompt for VS** (or PowerShell with VS Build Tools):
-
 ```powershell
 msbuild TmMyMod.sln /m /p:Configuration=Debug /p:Platform=Win32
