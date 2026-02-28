@@ -1,3 +1,4 @@
+![build](https://github.com/celyanito/tmuf-dll/actions/workflows/build-win32.yml/badge.svg)
 # tmuf-dll
 
 Injected DLL (Debug x86 / Win32) for TrackMania Forever / TMUF.
