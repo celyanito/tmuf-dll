@@ -1,0 +1,19 @@
+# Visual Studio
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.VC.db
+*.VC.VC.opendb
+ipch/
+
+# Build artifacts
+Debug/
+Release/
+x64/
+Win32/
+
+# Optional: logs/dumps
+*.log
+*.dmp
