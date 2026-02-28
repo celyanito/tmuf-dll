@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -14,13 +15,36 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build (Debug | Win32)
-        run: msbuild TmMyMod.sln /m /p:Configuration=Debug /p:Platform=Win32
+      - name: Locate solution
+        shell: pwsh
+        run: |
+          $sln = Get-ChildItem -Recurse -Filter *.sln | Select-Object -First 1
+          if (-not $sln) { throw "No .sln found in repo." }
+          "SLN=$($sln.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Write-Host "Using solution: $($sln.FullName)"
 
-      - name: Upload artifact (DLL)
+      - name: Show solution configurations
+        shell: pwsh
+        run: |
+          msbuild "$env:SLN" /t:ValidateSolutionConfiguration /v:m
+
+      - name: Build (try Win32, fallback x86)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          try {
+            msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform=Win32
+            Write-Host "Built with Platform=Win32"
+          } catch {
+            Write-Host "Win32 failed, retrying with Platform=x86..."
+            msbuild "$env:SLN" /m /p:Configuration=Debug /p:Platform=x86
+            Write-Host "Built with Platform=x86"
+          }
+
+      - name: Upload artifact (DLL/PDB)
         uses: actions/upload-artifact@v4
         with:
-          name: TmMyMod-Debug-Win32
+          name: build-Debug-x86
           path: |
             **\Debug\*.dll
             **\Debug\*.pdb
