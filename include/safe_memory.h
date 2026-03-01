@@ -1,5 +1,5 @@
 #pragma once
-#include "pch.h"
+#include "common.h"
 
 // ================= SAFE MEMORY =================
 static bool IsReadableAddress(uintptr_t addr, size_t size = 4)

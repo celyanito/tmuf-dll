@@ -1,5 +1,7 @@
-#include "pch.h"
-#include "dump_thread.h"
+#include "../include/dump_thread.h"
+#include "../include/common.h"
+#include "../include/ui/imgui_layer.h"
+#include "../include/hooks/d3d9_hook.h"
 
 // ================= DLLMAIN =================
 __declspec(dllexport) BOOL APIENTRY DllMain(

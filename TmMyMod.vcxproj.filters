@@ -1,48 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="src\dump_thread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dllmain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_layer.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hooks\d3d9_hook.cpp">
+      <Filter>src\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="external\minhook\src\buffer.c">
+      <Filter>external\minhook\src</Filter>
+    </ClCompile>
+    <ClCompile Include="external\minhook\src\hook.c">
+      <Filter>external\minhook\src</Filter>
+    </ClCompile>
+    <ClCompile Include="external\minhook\src\trampoline.c">
+      <Filter>external\minhook\src</Filter>
+    </ClCompile>
+    <ClCompile Include="external\minhook\src\hde\hde32.c">
+      <Filter>external\minhook\src\hde</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\dump_thread.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\game_structs.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="dump_thread.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\offsets.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="offsets.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\safe_memory.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="game_structs.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="common.h">
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="safe_memory.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="include\ui\imgui_layer.h">
+      <Filter>include\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hooks\d3d9_hook.h">
+      <Filter>include\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="external\minhook\include\MinHook.h">
+      <Filter>external\minhook\include</Filter>
+    </ClInclude>
+    <ClInclude Include="external\minhook\src\hde\hde32.h">
+      <Filter>external\minhook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="buffer.h">
+      <Filter>external\minhook\src</Filter>
+    </ClInclude>
+    <ClInclude Include="external\minhook\src\trampoline.h">
+      <Filter>external\minhook\src</Filter>
+    </ClInclude>
+    <ClInclude Include="external\minhook\src\pstdint.h">
+      <Filter>external\minhook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="external\minhook\src\hde\table32.h">
+      <Filter>external\minhook\src\hde</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="dump_thread.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
+    <Filter Include="src">
+      <UniqueIdentifier>{40f74575-a39a-483a-a499-ac5d0a6b55ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{adbd259e-6ebf-4db3-b5a4-41ec44a659b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ui">
+      <UniqueIdentifier>{603d89e4-0e47-45b5-a586-a5d4cd1fa583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{c298a486-20a9-446e-b96a-987edef97e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\hooks">
+      <UniqueIdentifier>{906259fe-5839-41c4-af78-2f490e0110ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\hooks">
+      <UniqueIdentifier>{a12d5ccd-17c8-410f-9521-6d9565e98dea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external">
+      <UniqueIdentifier>{83e8d2e0-733f-4fc1-9737-eb959bc06069}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\minhook">
+      <UniqueIdentifier>{c74c027e-577e-4ab0-aa9a-dd6c87bb6715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\minhook\src">
+      <UniqueIdentifier>{11e38b5b-8436-4a45-8ea7-8a06b04bd08d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\minhook\include">
+      <UniqueIdentifier>{75ffa524-d147-4858-ac88-3a289aae959e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\minhook\src\hde">
+      <UniqueIdentifier>{ccd72a8a-b402-4bfd-87a2-5657b179f306}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
