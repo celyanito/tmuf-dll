@@ -10,7 +10,8 @@ Injected DLL (**Win32 / x86**) for TrackMania Forever (TMNF/TMUF).
   - Robust install via **dummy device fallback** (works even if injected late)
   - Hooks **EndScene** + **Reset**
 - ImGui overlay
-  - Toggle: **F1** To display FPS ImGui Window
+  - Toggle: **F1** To enable the FPS Counter imGui window
+
   - Full mouse/keyboard support via **WndProc hook**
 - Memory reading
   - Waits for valid `CTrackMania*` (no timeout)
