@@ -95,8 +95,7 @@ static uintptr_t FindCTrackMania(uintptr_t base, uintptr_t& outRawA)
 }
 static bool WaitForCTrackMania(uintptr_t base,
     uintptr_t& outTrackMania,
-    uintptr_t& outRawA,
-    int timeoutMs = 15000) // 15s
+    uintptr_t& outRawA)
 {
     outTrackMania = 0;
     outRawA = 0;
@@ -104,15 +103,14 @@ static bool WaitForCTrackMania(uintptr_t base,
     std::cout << "[*] Waiting for valid CTrackMania*...\n";
 
     const int stepMs = 50;
-    int elapsed = 0;
 
     uintptr_t lastRawA = 0;
     bool printedStage = false;
 
-    while (elapsed < timeoutMs)
+    for (;;)
     {
         uintptr_t rawA = 0;
-        uintptr_t tm = FindCTrackMania(base, rawA); // ta version candA only
+        uintptr_t tm = FindCTrackMania(base, rawA); // candA only
 
         // Log seulement quand candA apparaît / change
         if (rawA != 0 && rawA != lastRawA)
@@ -136,11 +134,7 @@ static bool WaitForCTrackMania(uintptr_t base,
         }
 
         Sleep(stepMs);
-        elapsed += stepMs;
     }
-
-    std::cout << "[-] Timeout waiting for CTrackMania* (" << timeoutMs << " ms)\n";
-    return false;
 }
 DWORD WINAPI WaitAndDumpThread(LPVOID)
 {
@@ -174,8 +168,7 @@ DWORD WINAPI WaitAndDumpThread(LPVOID)
     uintptr_t trackmania = 0;
     uintptr_t rawA = 0;
 
-    if (!WaitForCTrackMania(base, trackmania, rawA, 15000))
-        return 0; // ou continue/handle error
+    WaitForCTrackMania(base, trackmania, rawA); // plus de timeout
     std::cout << "[+] CTrackMania* = 0x" << std::hex << trackmania << std::dec << "\n";
     std::cout << "    candA(base+0x" << std::hex << O_CTRACKMANIA_A << ") -> 0x" << rawA << std::dec << "\n";
     // ================= PROFILE =================
