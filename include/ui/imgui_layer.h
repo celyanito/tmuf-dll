@@ -1,3 +1,5 @@
+#pragma once
+#include <Windows.h>
 struct IDirect3DDevice9;
 struct HWND__;
 
@@ -15,4 +17,5 @@ namespace ui {
     void SetMenuOpen(bool open);
 
     bool OnWndProc(HWND__* hwnd, unsigned msg, std::uintptr_t wparam, std::intptr_t lparam);
+    bool HandleWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 }

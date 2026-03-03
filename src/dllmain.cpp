@@ -20,8 +20,6 @@ __declspec(dllexport) BOOL APIENTRY DllMain(
         freopen("CONIN$", "r", stdin);
         freopen("CONERR$", "w", stderr);
 
-        std::cout << "Hello World!\n";
-
         HANDLE hThread = CreateThread(nullptr, 0, WaitAndDumpThread, nullptr, 0, nullptr);
         if (hThread) CloseHandle(hThread);
 

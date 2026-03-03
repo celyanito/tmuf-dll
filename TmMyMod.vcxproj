@@ -125,7 +125,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\1.0.2\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\0.2.0\$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,7 +146,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\1.0.2\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\0.2.0\$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

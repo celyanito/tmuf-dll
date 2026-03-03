@@ -94,5 +94,8 @@ namespace ui {
 
         return result != 0;
     }
-
+    bool HandleWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) != 0;
+    }
 } // namespace ui

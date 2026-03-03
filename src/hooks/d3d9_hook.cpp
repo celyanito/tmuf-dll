@@ -1,3 +1,4 @@
+// src/hooks/d3d9_hook.cpp
 #include "../../include/common.h"
 #include "../../include/hooks/d3d9_hook.h"
 #include "../../include/ui/imgui_layer.h"
@@ -33,42 +34,63 @@ namespace hooks
         static constexpr int VTABLE_INDEX_IDirect3DDevice9_Reset = 16;
         static constexpr int VTABLE_INDEX_IDirect3DDevice9_EndScene = 42;
 
-        static bool     g_installed = false;
-        static HWND     g_hwnd = nullptr;
-        static WNDPROC  g_oldWndProc = nullptr;
+        static bool              g_installed = false;
+        static HWND              g_hwnd = nullptr;
+        static WNDPROC           g_oldWndProc = nullptr;
         static IDirect3DDevice9* g_lastDevice = nullptr;
 
-        // ------------------------------------------------------------
-        // WndProc hook: toggle F1 on KEYUP, forward input to ImGui
-        // ------------------------------------------------------------
-        static LRESULT CALLBACK WndProcHook(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+        // Anti double-toggle: empêche WndProc + fallback de toggler sur la même pression
+        static DWORD g_lastToggleTick = 0;
+        static bool CanToggleNow()
         {
-            // Toggle on KEYUP -> 1 press = 1 toggle (pas besoin de maintenir)
-            if (msg == WM_KEYUP && wParam == VK_F1) {
-                ui::SetMenuOpen(!ui::IsMenuOpen());
+            DWORD now = GetTickCount();
+            if (now - g_lastToggleTick < 200) // 200ms = bloque auto-repeat + double trigger
+                return false;
+            g_lastToggleTick = now;
+            return true;
+        }
+
+        static void PollToggleFallback(HWND hwnd)
+        {
+            // Fallback sur F1 (même touche que WndProc), mais gated par CanToggleNow()
+            const bool down = (GetAsyncKeyState(VK_F1) & 0x8000) != 0;
+            static bool prev = false;
+
+            const bool canToggle = hwnd && (GetForegroundWindow() == hwnd);
+            if (canToggle && down && !prev) {
+                if (CanToggleNow())
+                    ui::SetMenuOpen(!ui::IsMenuOpen());
+            }
+
+            prev = down;
+        }
+
+        // ------------------------------------------------------------
+        // WndProc hook: toggle F1 + forward input to ImGui layer
+        // ------------------------------------------------------------
+        LRESULT CALLBACK WndProcHook(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+        {
+            // Toggle d'abord (ne dépend pas d'ImGui)
+            if ((msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN) && wParam == VK_F1) {
+                if (CanToggleNow())
+                    ui::SetMenuOpen(!ui::IsMenuOpen());
                 return 0;
             }
 
-            // Forward to ImGui when menu open
-            if (ui::IsInitialized() && ui::IsMenuOpen()) {
-                if (ui::OnWndProc((HWND__*)hWnd, msg, (std::uintptr_t)wParam, (std::intptr_t)lParam))
-                    return 1;
+            // Puis ImGui
+            if (ui::IsMenuOpen()) {
+                // IMPORTANT: c'est ui::HandleWndProc qui doit appeler ImGui_ImplWin32_WndProcHandler
+                ui::HandleWndProc(hWnd, msg, wParam, lParam);
 
-                // Block game input while menu open (optionnel mais recommandé)
-                switch (msg) {
-                case WM_MOUSEMOVE:
-                case WM_LBUTTONDOWN: case WM_LBUTTONUP:
-                case WM_RBUTTONDOWN: case WM_RBUTTONUP:
-                case WM_MBUTTONDOWN: case WM_MBUTTONUP:
-                case WM_MOUSEWHEEL:
-                case WM_KEYDOWN: case WM_KEYUP:
-                case WM_CHAR:
+                // Bloque l'input au jeu *si* le menu est ouvert
+                if (msg == WM_MOUSEMOVE || msg == WM_LBUTTONDOWN || msg == WM_LBUTTONUP ||
+                    msg == WM_RBUTTONDOWN || msg == WM_RBUTTONUP || msg == WM_MOUSEWHEEL ||
+                    msg == WM_KEYDOWN || msg == WM_KEYUP || msg == WM_CHAR) {
                     return 1;
                 }
             }
 
-            return g_oldWndProc ? CallWindowProc(g_oldWndProc, hWnd, msg, wParam, lParam)
-                : DefWindowProc(hWnd, msg, wParam, lParam);
+            return CallWindowProc(g_oldWndProc, hWnd, msg, wParam, lParam);
         }
 
         // ------------------------------------------------------------
@@ -89,27 +111,55 @@ namespace hooks
         {
             g_lastDevice = device;
 
-            if (!ui::IsInitialized())
+            D3DDEVICE_CREATION_PARAMETERS cp{};
+            if (SUCCEEDED(device->GetCreationParameters(&cp)) && cp.hFocusWindow)
             {
-                D3DDEVICE_CREATION_PARAMETERS cp{};
-                if (SUCCEEDED(device->GetCreationParameters(&cp)) && cp.hFocusWindow)
+                // Si HWND a changé → on rehook + on rebind ImGui
+                if (g_hwnd != cp.hFocusWindow)
                 {
-                    g_hwnd = cp.hFocusWindow;
-
-                    ui::Init((HWND__*)g_hwnd, device);
-
-                    // Install WndProc once
-                    if (!g_oldWndProc) {
-                        g_oldWndProc = (WNDPROC)SetWindowLongPtr(g_hwnd, GWLP_WNDPROC, (LONG_PTR)WndProcHook);
-                        std::cout << "[wndproc] hooked\n";
+                    // Restore old wndproc on old window
+                    if (g_hwnd && g_oldWndProc) {
+                        SetWindowLongPtr(g_hwnd, GWLP_WNDPROC, (LONG_PTR)g_oldWndProc);
+                        g_oldWndProc = nullptr;
                     }
 
-                    std::cout << "[ui] Init with HWND=" << g_hwnd << "\n";
+                    const bool wasOpen = ui::IsMenuOpen();
+
+                    // Re-init ImGui sur le nouveau HWND
+                    if (ui::IsInitialized())
+                        ui::Shutdown();
+
+                    g_hwnd = cp.hFocusWindow;
+                    ui::Init((HWND__*)g_hwnd, device);
+                    ui::SetMenuOpen(wasOpen);
+
+                    // Hook wndproc on new window
+                    g_oldWndProc = (WNDPROC)SetWindowLongPtr(g_hwnd, GWLP_WNDPROC, (LONG_PTR)WndProcHook);
+                    std::cout << "[wndproc] re-hooked (HWND changed)\n";
+                }
+                else
+                {
+                    // Init “première fois” si pas encore fait
+                    if (!ui::IsInitialized())
+                    {
+                        // IMPORTANT: g_hwnd doit être set avant Init
+                        g_hwnd = cp.hFocusWindow;
+
+                        ui::Init((HWND__*)g_hwnd, device);
+
+                        if (!g_oldWndProc) {
+                            g_oldWndProc = (WNDPROC)SetWindowLongPtr(g_hwnd, GWLP_WNDPROC, (LONG_PTR)WndProcHook);
+                            std::cout << "[wndproc] hooked\n";
+                        }
+                        std::cout << "[ui] Init with HWND=" << g_hwnd << "\n";
+                    }
                 }
             }
 
-            if (ui::IsInitialized())
+            if (ui::IsInitialized()) {
+                PollToggleFallback(g_hwnd);
                 ui::RenderFrame();
+            }
 
             return g_origEndScene(device);
         }
@@ -339,7 +389,9 @@ namespace hooks
                 g_hwnd = nullptr;
                 std::cout << "[wndproc] restored\n";
             }
+
             ui::Shutdown();
+
             MH_DisableHook(MH_ALL_HOOKS);
             MH_Uninitialize();
 
