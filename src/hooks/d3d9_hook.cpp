@@ -3,10 +3,11 @@
 #include "../../include/hooks/d3d9_hook.h"
 #include "../../include/ui/imgui_layer.h"
 #include <d3d9.h>
-
+#include "../../include/discord_presence.h"
+#include "../../external/imgui/imgui.h"
 // MinHook
 #include "../../external/minhook/include/MinHook.h"
-
+#include "../../external/imgui/backends/imgui_impl_win32.h"
 namespace hooks
 {
     namespace d3d9
@@ -79,14 +80,23 @@ namespace hooks
 
             // Puis ImGui
             if (ui::IsMenuOpen()) {
-                // IMPORTANT: c'est ui::HandleWndProc qui doit appeler ImGui_ImplWin32_WndProcHandler
+                // Laisse ImGui “voir” les events
                 ui::HandleWndProc(hWnd, msg, wParam, lParam);
 
-                // Bloque l'input au jeu *si* le menu est ouvert
-                if (msg == WM_MOUSEMOVE || msg == WM_LBUTTONDOWN || msg == WM_LBUTTONUP ||
-                    msg == WM_RBUTTONDOWN || msg == WM_RBUTTONUP || msg == WM_MOUSEWHEEL ||
-                    msg == WM_KEYDOWN || msg == WM_KEYUP || msg == WM_CHAR) {
-                    return 1;
+                // Bloque seulement si ImGui veut capturer l’input
+                ImGuiIO& io = ImGui::GetIO();
+
+                const bool isMouseMsg =
+                    (msg == WM_MOUSEMOVE || msg == WM_LBUTTONDOWN || msg == WM_LBUTTONUP ||
+                        msg == WM_RBUTTONDOWN || msg == WM_RBUTTONUP || msg == WM_MOUSEWHEEL ||
+                        msg == WM_MBUTTONDOWN || msg == WM_MBUTTONUP || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP);
+
+                const bool isKeyMsg =
+                    (msg == WM_KEYDOWN || msg == WM_KEYUP || msg == WM_SYSKEYDOWN || msg == WM_SYSKEYUP ||
+                        msg == WM_CHAR);
+
+                if ((isMouseMsg && io.WantCaptureMouse) || (isKeyMsg && io.WantCaptureKeyboard)) {
+                    return 1; // ImGui garde l’input
                 }
             }
 
@@ -142,8 +152,7 @@ namespace hooks
                     // Init “première fois” si pas encore fait
                     if (!ui::IsInitialized())
                     {
-                        // IMPORTANT: g_hwnd doit être set avant Init
-                        g_hwnd = cp.hFocusWindow;
+                        g_hwnd = cp.hFocusWindow; // IMPORTANT
 
                         ui::Init((HWND__*)g_hwnd, device);
 
@@ -156,13 +165,32 @@ namespace hooks
                 }
             }
 
-            if (ui::IsInitialized()) {
+            if (ui::IsInitialized())
+            {
+                // (optionnel) ton fallback toggle, si tu l’as gardé
                 PollToggleFallback(g_hwnd);
+
+                // ---- Discord init (1x) + callbacks throttlés ----
+                static bool discordInitDone = false;
+                if (!discordInitDone) {
+                    discord_presence::Init();
+                    discordInitDone = true;
+                }
+
+                static ULONGLONG lastDiscordTick = 0;
+                ULONGLONG now = GetTickCount64();
+                if (now - lastDiscordTick >= 100) { // 10x/sec largement suffisant
+                    discord_presence::Tick();
+                    lastDiscordTick = now;
+                }
+                // -------------------------------------------------
+
                 ui::RenderFrame();
             }
 
             return g_origEndScene(device);
         }
+
 
         // ------------------------------------------------------------
         // CreateDevice hook (si injection tôt)

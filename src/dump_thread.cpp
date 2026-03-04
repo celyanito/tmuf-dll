@@ -4,6 +4,9 @@
 #include "../include/dump_thread.h"
 #include "../include/common.h"
 #include "../include/hooks/d3d9_hook.h"
+#include <cstdint>
+
+using namespace offsets;
 
 static bool GetModuleSize(uintptr_t base, uint32_t& outSizeOfImage)
 {

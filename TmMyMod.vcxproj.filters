@@ -46,6 +46,12 @@
     <ClCompile Include="external\imgui\imgui_demo.cpp">
       <Filter>external\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\tm_mapname.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\discord_presence.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\dump_thread.h">
@@ -111,6 +117,15 @@
     <ClInclude Include="external\imgui\imstb_truetype.h">
       <Filter>external\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="include\tm_mapname.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\discord_presence.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="external\discord_game_sdk\discord_game_sdk.h">
+      <Filter>external\discord_game_sdk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -151,6 +166,9 @@
     </Filter>
     <Filter Include="external\imgui\backends">
       <UniqueIdentifier>{00f0107b-ee29-412c-ae2f-96eeb800976f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\discord_game_sdk">
+      <UniqueIdentifier>{3cd121d4-c68c-4ab4-a9e3-5b1df3ae8faf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 #include "../include/common.h"
 #include "../include/ui/imgui_layer.h"
 #include "../include/hooks/d3d9_hook.h"
-
+#include "../include/discord_presence.h"
 // ================= DLLMAIN =================
 __declspec(dllexport) BOOL APIENTRY DllMain(
     HMODULE hModule,
@@ -27,6 +27,7 @@ __declspec(dllexport) BOOL APIENTRY DllMain(
     }
     case DLL_PROCESS_DETACH:
         FreeConsole();
+        discord_presence::Shutdown();
         break;
     }
     return TRUE;

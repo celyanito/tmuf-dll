@@ -15,3 +15,7 @@ struct CFastBuffer {
     T* pElems;
     int capacity;
 };
+struct CFastStringInt {
+    int Size;
+    wchar_t* Cstr;
+};

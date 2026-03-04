@@ -19,8 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="external\imgui\backends\imgui_impl_dx9.cpp" />
-    <ClCompile Include="external\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="external\imgui\backends\imgui_impl_dx9.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="external\imgui\backends\imgui_impl_win32.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="external\imgui\imgui.cpp" />
     <ClCompile Include="external\imgui\imgui_demo.cpp" />
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
@@ -30,14 +36,17 @@
     <ClCompile Include="external\minhook\src\hde\hde32.c" />
     <ClCompile Include="external\minhook\src\hook.c" />
     <ClCompile Include="external\minhook\src\trampoline.c" />
+    <ClCompile Include="src\discord_presence.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\dump_thread.cpp" />
     <ClCompile Include="src\hooks\d3d9_hook.cpp" />
+    <ClCompile Include="src\tm_mapname.cpp" />
     <ClCompile Include="src\ui\imgui_layer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="buffer.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="external\discord_game_sdk\discord_game_sdk.h" />
     <ClInclude Include="external\imgui\backends\imgui_impl_dx9.h" />
     <ClInclude Include="external\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="external\imgui\imconfig.h" />
@@ -51,11 +60,13 @@
     <ClInclude Include="external\minhook\src\hde\table32.h" />
     <ClInclude Include="external\minhook\src\pstdint.h" />
     <ClInclude Include="external\minhook\src\trampoline.h" />
+    <ClInclude Include="include\discord_presence.h" />
     <ClInclude Include="include\dump_thread.h" />
     <ClInclude Include="include\game_structs.h" />
     <ClInclude Include="include\hooks\d3d9_hook.h" />
     <ClInclude Include="include\offsets.h" />
     <ClInclude Include="include\safe_memory.h" />
+    <ClInclude Include="include\tm_mapname.h" />
     <ClInclude Include="include\ui\imgui_layer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -125,7 +136,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\0.2.0\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\1.0.3\$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -146,7 +157,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\0.2.0\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\1.0.3\$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -163,7 +174,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\1.0.2\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -181,7 +192,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <OutputFile>C:\Users\celya\AppData\Local\TMLoader\database\TmForever\products\mymod\1.0.2\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
